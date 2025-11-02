@@ -8,6 +8,16 @@ import datetime
 
 app = FastAPI(title="LCA A1–A3 MVP", version="0.1")
 
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # allow frontend later
 app.add_middleware(
     CORSMiddleware,
