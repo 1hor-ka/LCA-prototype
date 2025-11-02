@@ -1,9 +1,5 @@
-/**
- * API wrapper with retry & timeout to handle Render free-tier cold starts.
- * Backend URL comes from VITE_API_BASE (set in Render Static Site env).
- */
-const API_BASE =
-  (import.meta as any).env?.VITE_API_BASE || "http://127.0.0.1:8000";
+// Single-origin API: same domain as the app (served by FastAPI).
+const API_BASE = ""; // empty => fetch('/calculate') hits the same origin
 
 async function fetchWithRetry(
   url: string,
@@ -29,22 +25,18 @@ async function fetchWithRetry(
     } catch (err) {
       clearTimeout(timer);
       if (retries <= 0) throw err;
-      const delay = 1500 * Math.pow(2, 4 - retries); // 1.5s -> 3s -> 6s -> 12s
+      const delay = 1500 * Math.pow(2, 4 - retries);
       await new Promise((r) => setTimeout(r, delay));
       retries -= 1;
     }
   }
 }
 
-/** Call once on app load */
 export async function ping(): Promise<void> {
-  try {
-    await fetchWithRetry(`${API_BASE}/`, {}, 1, 20000);
-  } catch {}
+  try { await fetchWithRetry(`${API_BASE}/`, {}, 1, 20000); } catch {}
 }
 
-/** Main calculation call */
-export async function calculate(body: any) {
+export async function calculate(body: unknown) {
   const res = await fetchWithRetry(`${API_BASE}/calculate`, {
     method: "POST",
     body: JSON.stringify(body),
