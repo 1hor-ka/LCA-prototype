@@ -1,12 +1,9 @@
-import React, { useEffect } from "react";
+import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 import { ping } from "./api";
 
-const rootElement = document.getElementById("root");
-if (!rootElement) throw new Error("Root element #root not found in index.html");
-
-// Wake up backend once before rendering the app
+// Wake up backend before rendering
 async function init() {
   try {
     await ping();
@@ -15,8 +12,12 @@ async function init() {
     console.warn("⚠️ Failed to wake backend:", err);
   }
 
-  const root = ReactDOM.createRoot(rootElement);
-  root.render(
+  const rootElement = document.getElementById("root") as HTMLElement | null;
+  if (!rootElement) {
+    throw new Error("Root element #root not found in index.html");
+  }
+
+  ReactDOM.createRoot(rootElement as HTMLElement).render(
     <React.StrictMode>
       <App />
     </React.StrictMode>
