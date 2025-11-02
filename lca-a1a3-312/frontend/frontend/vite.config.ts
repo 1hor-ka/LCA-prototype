@@ -3,4 +3,5 @@ import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   plugins: [react()],
+  base: "/app/", // важный префикс: фронт будет доступен по /app
 });
